@@ -53,6 +53,9 @@ install_repo_packages() {
         base-devel
         curl
         jq
+        eza
+        ugrep
+        starship
 
         hyprland
         xdg-desktop-portal
