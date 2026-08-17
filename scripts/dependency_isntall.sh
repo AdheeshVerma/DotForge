@@ -102,8 +102,7 @@ detect_aur_helper() {
 install_paru() {
     log "No AUR helper detected. Installing paru..."
 
-    local build_dir
-    build_dir="$(mktemp -d)"
+    local build_dir="$(mktemp -d)"
 
     trap 'rm -rf "$build_dir"' RETURN
 

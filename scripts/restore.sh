@@ -12,6 +12,12 @@ configs=(
     "caelestia"
 )
 
+prepare_home() {
+    mkdir -p "$HOME/.config"
+    mkdir -p "$HOME/.local/share"
+    mkdir -p "$HOME/.local/state"
+}
+
 backup_config() {
     local target="$1"
     local name="$(basename "$target")"
@@ -49,6 +55,8 @@ restore_config() {
         return 1
     fi
 }
+
+prepare_home
 
 # Validating All the dirs in my backup
 for config in "${configs[@]}"; do
