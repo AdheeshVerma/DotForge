@@ -304,7 +304,7 @@ graph LR
 
 | Preview | Description |
 |---|---|
-| ![Before and After](assets/images/before-after.png) | Bare Arch → Configured desktop |
+| ![Before and After](assets/images/Desktop_Image.png) | Bare Arch → Configured desktop |
 | ![Fastfetch Configuration](assets/images/fastfetch.png) | Fastfetch system info display |
 | ![DotForge Structure](assets/images/structure.png) | Repository and config layout |
 
