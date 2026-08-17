@@ -30,6 +30,19 @@ else
     log "No fastfetch backup found. Skipping."
 fi
 
+# Fish
+
+if [[ -d "$BACKUP_DIR/fish" ]]; then
+    log "Restoring fish..."
+
+    mkdir -p "$HOME/.config/fish"
+
+    cp -a "$BACKUP_DIR/fish/." \
+        "$HOME/.config/fish/"
+else
+    log "No fish backup found. Skipping."
+fi
+
 # Starship
 
 if [[ -f "$BACKUP_DIR/starship.toml" ]]; then
