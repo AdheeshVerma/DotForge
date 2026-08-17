@@ -306,7 +306,7 @@ graph LR
 |---|---|
 | ![Before and After](assets/images/Desktop_Image.png) | Bare Arch → Configured desktop |
 | ![Fastfetch Configuration](assets/images/fastfetch.png) | Fastfetch system info display |
-| ![DotForge Structure](assets/images/structure.png) | Repository and config layout |
+| ![DotForge Structure](assets/images/Dependency_Graph.png) | Dependency Graph |
 
 ---
 
