@@ -1,0 +1,53 @@
+{
+    "appearance": {
+        "anim": {
+            "durations": {
+                "scale": 0.7909516144906144
+            }
+        },
+        "padding": {
+            "scale": 0.9644606372694979
+        },
+        "spacing": {
+            "scale": 1.024933368869936
+        },
+        "transparency": {
+            "enabled": false
+        }
+    },
+    "background": {
+        "desktopClock": {
+            "background": {
+                "enabled": false
+            },
+            "enabled": true,
+            "invertColors": false
+        },
+        "visualiser": {
+            "enabled": true
+        }
+    },
+    "bar": {
+        "activeWindow": {
+            "compact": false,
+            "inverted": true
+        },
+        "clock": {
+            "showDate": true
+        },
+        "persistent": false
+    },
+    "launcher": {
+        "enableDangerousActions": false,
+        "enabled": true,
+        "showOnHover": false
+    },
+    "services": {
+        "lyricsBackend": "Auto",
+        "showLyrics": false,
+        "visualiserBars": 25
+    },
+    "sidebar": {
+        "enabled": true
+    }
+}
