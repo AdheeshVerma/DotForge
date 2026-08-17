@@ -1,6 +1,11 @@
 ## Set values
 # Hide welcome message & ensure we are reporting fish as shell
-set fish_greeting
+
+# Uncomment the first line and rename .config/fish/fucntions/fish_greeting to smth else to remove duplicate fastfetches
+
+#set fish_greeting
+functions -e fish_greeting
+
 set VIRTUAL_ENV_DISABLE_PROMPT "1"
 set -x SHELL /usr/bin/fish
 
