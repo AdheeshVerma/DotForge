@@ -70,7 +70,8 @@ sudo pacman -S --needed --noconfirm \
     ttf-jetbrains-mono-nerd \
     noto-fonts \
     noto-fonts-emoji \
-    papirus-icon-theme
+    papirus-icon-theme \
+    ugrep
 
 # Caelestia
 
