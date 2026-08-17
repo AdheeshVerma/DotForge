@@ -3,6 +3,7 @@
 set -euo pipefail
 
 SCRIPT_NAME="$(basename "$0")"
+AUR_HELPER=""
 
 log() {
     printf '[Dotforge] %s\n' "$1"
@@ -17,9 +18,9 @@ die() {
     exit 1
 }
 
-require_root_or_sudo() {
+check_user() {
     if [[ $EUID -eq 0 ]]; then
-        die "Do not run dependency_install.sh as root."
+        die "Do not run $SCRIPT_NAME as root."
     fi
 
     if ! command -v sudo >/dev/null 2>&1; then
@@ -32,60 +33,19 @@ check_arch() {
         die "Cannot determine operating system."
     fi
 
+
     source /etc/os-release
 
     if [[ "${ID:-}" != "arch" && "${ID_LIKE:-}" != *"arch"* ]]; then
         die "This version of Dotforge only supports Arch-based systems."
     fi
 
-    log "Detected Arch-based system: ${PRETTY_NAME:-unknown}"
+    log "Detected: ${PRETTY_NAME:-Arch-based system}"
 }
 
 check_pacman() {
-    if ! command -v pacman >/dev/null 2>&1; then
+    command -v pacman >/dev/null 2>&1 ||
         die "pacman was not found."
-    fi
-}
-
-install_repo_packages() {
-    local packages=(
-        git
-        base-devel
-        curl
-        jq
-        eza
-        ugrep
-        starship
-
-        hyprland
-        xdg-desktop-portal
-        xdg-desktop-portal-hyprland
-        xdg-desktop-portal-gtk
-
-        pipewire
-        pipewire-pulse
-        wireplumber
-
-        networkmanager
-        fish
-
-        brightnessctl
-        # ddcutil
-        # lm_sensors
-
-        wl-clipboard
-        cliphist
-        grim
-        slurp
-        swappy
-
-        ttf-jetbrains-mono-nerd
-        ttf-material-symbols-variable
-    )
-
-    log "Installing official repository packages..."
-
-    sudo pacman -S --needed "${packages[@]}"
 }
 
 detect_aur_helper() {
@@ -103,11 +63,10 @@ detect_aur_helper() {
 }
 
 install_paru() {
-    log "No AUR helper detected. Installing paru..."
+    log "No AUR helper found. Installing paru..."
 
-    local build_dir="$(mktemp -d)"
-
-    trap 'rm -rf "$build_dir"' RETURN
+    local build_dir
+    build_dir="$(mktemp -d)"
 
     git clone https://aur.archlinux.org/paru.git "$build_dir/paru"
 
@@ -116,11 +75,71 @@ install_paru() {
         makepkg -si --noconfirm
     )
 
-    if ! command -v paru >/dev/null 2>&1; then
-        die "paru installation failed."
-    fi
+    rm -rf "$build_dir"
+
+    command -v paru >/dev/null 2>&1 ||
+        die "Failed to install paru."
 
     AUR_HELPER="paru"
+}
+
+install_repo_packages() {
+    local packages=(
+        # Core
+        git
+        base-devel
+        curl
+        jq
+
+        # Hyprland / Wayland
+        hyprland
+        xdg-desktop-portal
+        xdg-desktop-portal-hyprland
+        xdg-desktop-portal-gtk
+        uwsm
+
+        # PipeWire / audio
+        pipewire
+        pipewire-pulse
+        wireplumber
+        cava
+
+        # Shell
+        fish
+        starship
+        eza
+        ugrep
+
+        # Caelestia CLI supporting tools
+        swappy
+        libnotify
+        slurp
+        wl-clipboard
+        cliphist
+        xdg-utils
+        dart-sass
+        grim
+        fuzzel
+        gpu-screen-recorder
+        dconf
+        killall
+
+        # Terminal / utilities from restored config
+        foot
+        fastfetch
+
+        # Fonts
+        ttf-jetbrains-mono-nerd
+        ttf-material-symbols-variable
+
+        # Themes / icons
+        adwaita-icon-theme
+        papirus-icon-theme
+    )
+
+    log "Installing official repository packages..."
+
+    sudo pacman -S --needed "${packages[@]}"
 }
 
 install_aur_packages() {
@@ -141,13 +160,20 @@ validate_packages() {
         xdg-desktop-portal
         xdg-desktop-portal-hyprland
         xdg-desktop-portal-gtk
+        uwsm
 
         pipewire
         pipewire-pulse
         wireplumber
+        cava
 
-        networkmanager
         fish
+        starship
+        eza
+        ugrep
+
+        foot
+        fastfetch
 
         caelestia-cli
         caelestia-shell
@@ -157,21 +183,60 @@ validate_packages() {
     log "Validating installed packages..."
 
     local package
+    local failed=0
 
     for package in "${packages[@]}"; do
         if pacman -Q "$package" >/dev/null 2>&1; then
             printf '  ✓ %s\n' "$package"
         else
             printf '  ✗ %s\n' "$package"
-            die "Package validation failed."
+            failed=1
         fi
     done
+
+    if (( failed )); then
+        die "One or more required packages are missing."
+    fi
+}
+
+validate_commands() {
+    local commands=(
+        hyprland
+        hyprctl
+        fish
+        starship
+        eza
+        ugrep
+        foot
+        fastfetch
+        caelestia
+        quickshell
+        cava
+    )
+
+    log "Validating required commands..."
+
+    local command
+    local failed=0
+
+    for command in "${commands[@]}"; do
+        if command -v "$command" >/dev/null 2>&1; then
+            printf '  ✓ %s\n' "$command"
+        else
+            printf '  ✗ %s\n' "$command"
+            failed=1
+        fi
+    done
+
+    if (( failed )); then
+        die "One or more required commands are unavailable."
+    fi
 }
 
 main() {
-    log "Starting dependency installation."
+    log "Starting Dotforge dependency installation."
 
-    require_root_or_sudo
+    check_user
     check_arch
     check_pacman
 
@@ -185,7 +250,9 @@ main() {
 
     install_repo_packages
     install_aur_packages
+
     validate_packages
+    validate_commands
 
     log "Dependency installation completed successfully."
 }
