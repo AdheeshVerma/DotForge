@@ -1,0 +1,1 @@
+#An install script to begin the welcome interface
